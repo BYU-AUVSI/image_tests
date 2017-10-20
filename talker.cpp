@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     if(!ros::param::get("use_compression", use_compression))
         ROS_WARN_STREAM("Use compression not set");
 
-
+    ROS_INFO_STREAM("Getting image");
     cv_bridge::CvImage cv_image;
     cv_image.image = getImageForSize(image_size);
 
@@ -58,6 +58,7 @@ int main(int argc, char** argv)
     
     ros::Rate rate(publish_frequency);
 
+    ROS_INFO_STREAM("Starting publish loop");    
     while (nh.ok()) 
     {
         pub.publish(ros_image);
