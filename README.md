@@ -13,4 +13,4 @@ Stress tests the ROS network to find out the maximum bandwidth at which images s
 1. Clone the repo into the source folder in your workspace.
 2. Run `catkin_make` in the workspace root.
 3. Run `roslaunch image_transport_profiler profiler.launch` to start the stress test.
-4. Use `rostopic list` to view topics. Use `rostopic bw <topic_name>` to view bandwidth.
+4. Use `rostopic list` to view topics. Use `rostopic bw <topic_name>` to view bandwidth. Use `rostopic hz <topic_name>` to see if the subscribing node is reading out at the same rate we are writing to a topic.
