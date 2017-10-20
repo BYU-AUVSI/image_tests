@@ -36,12 +36,15 @@ int main(int argc, char** argv)
 
     // Get parameters
     int publish_frequency, image_size, publisher_queue_size;
+    bool use_compression;
     if(!ros::param::get("publisher_frequency", publish_frequency))
         ROS_WARN_STREAM("Publisher frequency not set");
     if(!ros::param::get("image_size", image_size))
         ROS_WARN_STREAM("Image size not set");
     if(!ros::param::get("publisher_queue_size", publisher_queue_size))
         ROS_WARN_STREAM("Publisher queue size not set");
+    if(!ros::param::get("use_compression", use_compression))
+        ROS_WARN_STREAM("Use compression not set");
 
 
     cv_bridge::CvImage cv_image;
