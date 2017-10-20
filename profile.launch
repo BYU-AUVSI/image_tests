@@ -1,17 +1,10 @@
 <launch>
+    <node name="state_image_stamper" pkg="sniper_cam" type="image_stamper.py"></node>
+    <node name="state_image_writer" pkg="sniper_cam" type="state_image_writer.py"></node>
 
-<node name="state_image_stamper" pkg="sniper_cam" type="image_stamper.py">
- </node>
- <node name="state_image_writer" pkg="sniper_cam" type="state_image_writer.py">
- </node>
-
-
-
- <node name="profiler" pkg="image_transport_profiler" type="talker">
- </node>
-
- 
-
-
-
+    <param name="publisher_frequency" value="5000"/>
+    <param name="publisher_queue_size" value="1"/>
+    <!-- image_size is in megapixels. Possible values are 1, 16, 24 -->
+    <param name="image_size" value="1"/>
+    <node name="profiler" pkg="image_transport_profiler" type="talker" output="screen"></node>
 </launch>
