@@ -1,7 +1,6 @@
 <launch>
     <node name="state_image_stamper" pkg="sniper_cam" type="image_stamper.py"></node>
-    <node name="state_image_writer" pkg="sniper_cam" type="state_image_writer.py"></node>
-
+    
     <param name="publisher_frequency" value="10"/>
     <param name="use_compression" value="false"/>
     <param name="publisher_queue_size" value="1"/>

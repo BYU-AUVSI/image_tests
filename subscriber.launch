@@ -1,0 +1,3 @@
+<launch>
+    <node name="state_image_writer" pkg="sniper_cam" type="state_image_writer.py"></node>
+</launch>
