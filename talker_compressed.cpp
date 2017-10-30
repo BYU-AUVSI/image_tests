@@ -1,5 +1,6 @@
 #include "ros/ros.h"
 #include "ros/package.h"
+#include <image_transport/image_transport.h>
 #include <string>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -33,7 +34,8 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "transport_profiler");
     ros::NodeHandle nh;
-    ROS_INFO_STREAM("Starting uncompressed talker node");
+    image_transport::ImageTransport it(nh);
+    ROS_INFO_STREAM("Starting compressed talker node");
 
     // Get parameters
     int publish_frequency, image_size, publisher_queue_size;
@@ -55,7 +57,8 @@ int main(int argc, char** argv)
     sensor_msgs::Image ros_image;
     cv_image.toImageMsg(ros_image);
 
-    ros::Publisher pub = nh.advertise<sensor_msgs::Image>("/image_raw", publisher_queue_size);
+    // We will use a republisher node to get this into /image_raw since we have a python stamper.
+    image_transport::Publisher pub = it.advertise("/image_raw_compressed", publisher_queue_size);
     
     ros::Rate rate(publish_frequency);
 

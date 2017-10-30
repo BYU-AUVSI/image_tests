@@ -1,10 +1,21 @@
 <launch>
-    <node name="state_image_stamper" pkg="sniper_cam" type="image_stamper.py"></node>
-    
+    <arg name="use_compression" value="true"/>
     <param name="publisher_frequency" value="10"/>
-    <param name="use_compression" value="false"/>
     <param name="publisher_queue_size" value="1"/>
     <!-- image_size is in megapixels. Possible values are 1, 16, 24 -->
-    <param name="image_size" value="16"/>
-    <node name="profiler" pkg="image_transport_profiler" type="talker" output="screen"></node>
+    <param name="image_size" value="24"/>
+
+    <group unless="$(arg use_compression)">
+        <node name="profiler" pkg="image_transport_profiler" type="talker" output="screen">
+        </node>
+    </group>
+
+    <group if="$(arg use_compression)">
+        <node name="profiler_compressed" pkg="image_transport_profiler" type="talker_compressed" output="screen">
+        </node>
+    </group>
+
+    <node name="state_image_stamper" pkg="sniper_cam" type="image_stamper.py">
+            <param name="frame_rate_in" value="1"/>
+        </node>
 </launch>

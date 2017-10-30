@@ -7,7 +7,7 @@ project(image_transport_profiler)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs cv_bridge roslib)
+find_package(catkin REQUIRED COMPONENTS roscpp sensor_msgs cv_bridge roslib image_transport)
 
 find_package(OpenCV)
 
@@ -150,7 +150,9 @@ include_directories(
  #)
 
 add_executable(talker talker.cpp)
+add_executable(talker_compressed talker_compressed.cpp)
 target_link_libraries(talker ${catkin_LIBRARIES})
+target_link_libraries(talker_compressed ${catkin_LIBRARIES})
 
 #############
 ## Install ##
