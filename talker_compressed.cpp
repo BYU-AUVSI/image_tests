@@ -46,8 +46,7 @@ int main(int argc, char** argv)
         ROS_WARN_STREAM("Image size not set");
     if(!ros::param::get("publisher_queue_size", publisher_queue_size))
         ROS_WARN_STREAM("Publisher queue size not set");
-    if(!ros::param::get("use_compression", use_compression))
-        ROS_WARN_STREAM("Use compression not set");
+
 
     ROS_INFO_STREAM("Getting image");
     cv_bridge::CvImage cv_image;
