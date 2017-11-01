@@ -13,6 +13,5 @@
     <group if="$(arg use_compression)">
         <node name="profiler_compressed" pkg="image_transport_profiler" type="talker_compressed" output="screen">
         </node>
-        <!-- Make sure to run "rosrun image_transport republish compressed in:=image_raw_compressed/ raw out:=image_raw" here -->
     </group>
 </launch>
