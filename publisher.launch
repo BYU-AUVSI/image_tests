@@ -2,6 +2,7 @@
     <arg name="use_compression" value="true"/>
     <param name="publisher_frequency" value="10"/>
     <param name="publisher_queue_size" value="1"/>
+    <param name="compression_percentage" value="50"/>
     <!-- image_size is in megapixels. Possible values are 1, 16, 24 -->
     <param name="image_size" value="24"/>
 
