@@ -1,6 +1,8 @@
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <string>
+#include <fstream>
 
 #define DEBUG // Run tests
 
@@ -16,16 +18,22 @@ static double rPhi = 0;
 static double rLam = 0;
 static double rH = 0; // MSL, positive, in meters
 
-struct NED_s {
+struct NED {
     double N; // North
     double E; // East
     double D; // Down. Down is negative. 10 feet above ground = -10.
 };
 
+struct LatLon {
+    double LAT;
+    double LON;
+};
+
 // Prototypes
 void printUsage();
-void printNED(NED_s ned);
-NED_s GPS2NED(double phi, double lambda, double h);
+void printNED(NED ned);
+LatLon str2LatLon(std::string lat, std::string lon);
+NED GPS2NED(double phi, double lambda, double h);
 void runTests();
 
 int main(int argc, char* argv[]) {
@@ -49,11 +57,18 @@ void printUsage() {
     std::cout << "Usage: ./a.out latitude longitude altitude" << std::endl;
 }
 
-void printNED(NED_s ned) {
+void printNED(NED ned) {
     std::cout << "N: " << ned.N << "\nE: " << ned.E << "\nD: " << ned.D << std::endl;
 }
 
-NED_s GPS2NED(double phi, double lambda, double h)
+LatLon str2LatLon(std::string lat, std::string lon) {
+    LatLon result;
+    result.LAT = std::stod(lat.substr(1, 2)) + std::stod(lat.substr(4, 2)) / 60.0 + stod(lat.substr(7, 5)) / 3600.0;
+    result.LON = std::stod(lon.substr(2, 3)) + std::stod(lon.substr(5, 2)) / 60.0 + stod(lon.substr(8, 5)) / 3600.0;
+    return result;
+}
+
+NED GPS2NED(double phi, double lambda, double h)
 {
 	// send in phi (latitude) as an angle in degrees ex.38.14626
 	// send in lambda (longitude) as an angle in degrees ex. 76.42816
@@ -92,7 +107,7 @@ NED_s GPS2NED(double phi, double lambda, double h)
 	double dz = z - zr;
 
 	// Rotate the point in ECEF to the Local NED
-	NED_s ned;
+	NED ned;
 	ned.N = (-sin(rPhiRad)*cos(rLamRad)*dx) + (-sin(rPhiRad)*sin(rLamRad)*dy) + cos(rPhiRad)*dz;
 	ned.E = (sin(rLamRad)*dx) - (cos(rLamRad)*dy);
 	ned.D = (-cos(rPhiRad)*cos(rLamRad)*dx) + (-cos(rPhiRad)*sin(rLamRad)*dy) + (-sin(rPhiRad)*dz);
@@ -100,5 +115,35 @@ NED_s GPS2NED(double phi, double lambda, double h)
 }
 
 void runTests() {
+    // Set the reference point
+    LatLon ref = str2LatLon("N38-09-01.50", "W076-25-29.70");
+    rPhi = ref.LAT;
+    rLam = ref.LON;
+    rH = 6.7056;
+
+    // Read the test_input file and compare it to test_expected_output
+    std::ifstream input, expected_output;
+    input.open("test_input.txt");
+    expected_output.open("test_expected_output.txt");
+
+    std::string lat, lon;
+    LatLon latlon;
+    NED actual;
+    int testNum = 0;
+    while (!input.eof()) {
+        testNum ++;
+        input >> lat >> lon;
+        latlon = str2LatLon(lat, lon);
+        NED actualNed = GPS2NED(latlon.LAT, latlon.LON, rH);
+
+        // Compare to expected
+        double n, e;
+        expected_output >> n >> e;
+        if(n != actualNed.N || e != actualNed.E) {
+            std::cout << "Test " << testNum << " failed" << std::endl;
+            exit(1);
+        }
+    }
     
+    std::cout << "All tests passed" << std::endl;
 }
