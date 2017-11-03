@@ -1,23 +1,38 @@
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
+
+#define DEBUG // Run tests
+
+/*
+    Converts latitude and longitude to NED coordinates. We can 
+    use this to generate NED coordinates for testing given GPS locations.
+*/
 
 // rLam is the reference longitude (in degrees)
 // rPhi is the reference latitude (in degrees)
 // The reference angles define where the 0,0,0 point is in the local NED coordinates
 static double rPhi = 0;
 static double rLam = 0;
+static double rH = 0; // MSL, positive, in meters
 
-void printUsage() {
-    std::cout << "Usage: ./a.out latitude longitude altitude" << std::endl;
-}
+struct NED_s {
+    double N; // North
+    double E; // East
+    double D; // Down. Down is negative. 10 feet above ground = -10.
+};
 
-void printNED(NED_s ned) {
-
-}
-
+// Prototypes
+void printUsage();
+void printNED(NED_s ned);
 NED_s GPS2NED(double phi, double lambda, double h);
+void runTests();
 
 int main(int argc, char* argv[]) {
+#ifdef DEBUG
+    runTests();
+#endif
+#ifndef DEBUG
     if(argc < 4) {
         printUsage();
     }
@@ -27,6 +42,15 @@ int main(int argc, char* argv[]) {
     double alti = atof(argv[3]);
 
     printNED(GPS2NED(lati, longi, alti));
+#endif
+}
+
+void printUsage() {
+    std::cout << "Usage: ./a.out latitude longitude altitude" << std::endl;
+}
+
+void printNED(NED_s ned) {
+    std::cout << "N: " << ned.N << "\nE: " << ned.E << "\nD: " << ned.D << std::endl;
 }
 
 NED_s GPS2NED(double phi, double lambda, double h)
@@ -42,10 +66,16 @@ NED_s GPS2NED(double phi, double lambda, double h)
 	double b = 6356752.3142;					// length of Earth’s semi-minor axis in meters
     double e2 = 1. - pow((b / a), 2);			// first numerical eccentricity
     
+    // Convert reference points into radians.
     double rPhiRad = rPhi*piD180;
     double rLamRad = rLam*piD180;
+    double rHRad = rH*piD180;
     
-	double chi = sqrt(1 - e2*sin(rPhiRad)*sin(rPhiRad));
+    // Convert the angles into Earth Centered Earth Fixed Reference Frame
+    double chi = sqrt(1 - e2*sin(rPhiRad)*sin(rPhiRad));
+	double xr = (a / chi + rHRad)* cos(rPhi)*cos(rLam);
+	double yr = (a / chi + rHRad)* cos(rPhi)*sin(rLam);
+	double zr = (a*(1 - e2) / chi + rHRad)*sin(rPhi);
 
 	// Convert the incoming angles to radians
 	phi = phi*piD180;
@@ -67,4 +97,8 @@ NED_s GPS2NED(double phi, double lambda, double h)
 	ned.E = (sin(rLamRad)*dx) - (cos(rLamRad)*dy);
 	ned.D = (-cos(rPhiRad)*cos(rLamRad)*dx) + (-cos(rPhiRad)*sin(rLamRad)*dy) + (-sin(rPhiRad)*dz);
 	return ned;
+}
+
+void runTests() {
+    
 }
