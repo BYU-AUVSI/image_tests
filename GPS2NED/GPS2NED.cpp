@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <iomanip>
 
 #define DEBUG // Run tests
 
@@ -53,6 +55,13 @@ int main(int argc, char* argv[]) {
 #endif
 }
 
+double roundTo6(double in) {
+    std::stringstream tmp;
+    tmp << std::setprecision(6) << in;
+    double new_val = std::stod(tmp.str());
+    return new_val;
+}
+
 void printUsage() {
     std::cout << "Usage: ./a.out latitude longitude altitude" << std::endl;
 }
@@ -88,9 +97,9 @@ NED GPS2NED(double phi, double lambda, double h)
     
     // Convert the angles into Earth Centered Earth Fixed Reference Frame
     double chi = sqrt(1 - e2*sin(rPhiRad)*sin(rPhiRad));
-	double xr = (a / chi + rHRad)* cos(rPhi)*cos(rLam);
-	double yr = (a / chi + rHRad)* cos(rPhi)*sin(rLam);
-	double zr = (a*(1 - e2) / chi + rHRad)*sin(rPhi);
+	double xr = (a / chi + rHRad)* cos(rPhiRad)*cos(rLamRad);
+	double yr = (a / chi + rHRad)* cos(rPhiRad)*sin(rLamRad);
+	double zr = (a*(1 - e2) / chi + rHRad)*sin(rPhiRad);
 
 	// Convert the incoming angles to radians
 	phi = phi*piD180;
@@ -135,11 +144,11 @@ void runTests() {
         input >> lat >> lon;
         latlon = str2LatLon(lat, lon);
         NED actualNed = GPS2NED(latlon.LAT, latlon.LON, rH);
-
+        
         // Compare to expected
         double n, e;
         expected_output >> n >> e;
-        if(n != actualNed.N || e != actualNed.E) {
+        if(n != roundTo6(actualNed.N) || e != roundTo6(actualNed.E)) {
             std::cout << "Test " << testNum << " failed" << std::endl;
             exit(1);
         }
