@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iomanip>
 
-#define DEBUG // Run tests
+//#define DEBUG // Run tests
 
 /*
     Converts latitude and longitude to NED coordinates. We can 
@@ -16,9 +16,9 @@
 // rLam is the reference longitude (in degrees)
 // rPhi is the reference latitude (in degrees)
 // The reference angles define where the 0,0,0 point is in the local NED coordinates
-static double rPhi = 0;
-static double rLam = 0;
-static double rH = 0; // MSL, positive, in meters
+static std::string rPhi = "N41-50-5.778";
+static std::string rLam = "W111-54-34.854";
+static double rH = 1410.102336; // MSL, positive, in meters
 
 struct NED {
     double N; // North
@@ -37,21 +37,24 @@ void printNED(NED ned);
 LatLon str2LatLon(std::string lat, std::string lon);
 NED GPS2NED(double phi, double lambda, double h);
 void runTests();
+void printLatLon(LatLon latlon);    
 
 int main(int argc, char* argv[]) {
 #ifdef DEBUG
     runTests();
 #endif
 #ifndef DEBUG
-    if(argc < 4) {
+    if(argc == 4) { // Do GPS to NED
+        std::string lati = (argv[1]);
+        std::string longi = (argv[2]);
+        double alti = atof(argv[3]);
+
+        LatLon latlon = str2LatLon(lati, longi);
+        printNED(GPS2NED(latlon.LAT, latlon.LON, alti));
+    }
+    else { // Invalid
         printUsage();
     }
-
-    double lati = atof(argv[1]);
-    double longi = atof(argv[2]);
-    double alti = atof(argv[3]);
-
-    printNED(GPS2NED(lati, longi, alti));
 #endif
 }
 
@@ -68,6 +71,10 @@ void printUsage() {
 
 void printNED(NED ned) {
     std::cout << "N: " << ned.N << "\nE: " << ned.E << "\nD: " << ned.D << std::endl;
+}
+
+void printLatLon(LatLon latlon) {
+    std::cout << latlon.LAT << "\n" << latlon.LON << std::endl;
 }
 
 LatLon str2LatLon(std::string lat, std::string lon) {
@@ -91,8 +98,9 @@ NED GPS2NED(double phi, double lambda, double h)
     double e2 = 1. - pow((b / a), 2);			// first numerical eccentricity
     
     // Convert reference points into radians.
-    double rPhiRad = rPhi*piD180;
-    double rLamRad = rLam*piD180;
+    LatLon ref = str2LatLon(rPhi, rLam);
+    double rPhiRad = ref.LAT*piD180;
+    double rLamRad = ref.LON*piD180;
     double rHRad = rH*piD180;
     
     // Convert the angles into Earth Centered Earth Fixed Reference Frame
@@ -125,9 +133,8 @@ NED GPS2NED(double phi, double lambda, double h)
 
 void runTests() {
     // Set the reference point
-    LatLon ref = str2LatLon("N38-09-01.50", "W076-25-29.70");
-    rPhi = ref.LAT;
-    rLam = ref.LON;
+    rPhi = "N38-09-01.50";
+    rLam = "W076-25-29.70";
     rH = 6.7056;
 
     // Read the test_input file and compare it to test_expected_output
