@@ -3,6 +3,5 @@
     <node name="state_image_stamper" pkg="sniper_cam" type="image_stamper.py">
         <param name="frame_rate_in" value="1"/>
     </node>
-    <!-- Make sure to run "rosrun image_transport republish compressed in:=image_raw_compressed/ raw out:=image_raw" here -->
     <node name="uncompress" pkg="image_transport" type="republish" args="compressed in:=image_raw_compressed/ raw out:=image_raw"></node>
 </launch>
