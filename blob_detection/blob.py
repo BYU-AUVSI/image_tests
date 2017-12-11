@@ -1,15 +1,26 @@
+
 # Standard imports
 import cv2
 import numpy as np
  
 # Read image
-im = cv2.imread("blob.jpg", cv2.IMREAD_GRAYSCALE)
+im = cv2.imread("2017competition/all_images/061517_11-38-20-518.jpg", cv2.IMREAD_GRAYSCALE)
 
-# Set params
+# Set para ms
 params = cv2.SimpleBlobDetector_Params()
-params.minThreshold = 10
-params.maxThreshold = 200
+
+params.minThreshold = 0
+params.maxThreshold = 255
+params.thresholdStep = 25
+
 params.filterByColor = False
+params.filterByArea = True
+params.filterByCircularity = False
+params.filterByInertia = True
+params.filterByConvexity = False
+params.minArea = 75
+
+params.minInertiaRatio = .5
 
 print(str(params.minThreshold) + " " + str(params.maxThreshold) + " " + str(params.thresholdStep))
 print params.filterByColor
@@ -17,12 +28,16 @@ print params.filterByArea
 print params.filterByCircularity
 print params.filterByInertia
 print params.filterByConvexity
+print params.minArea
+print params.minInertiaRatio
+print params.maxInertiaRatio
 
 # Set up the detector with default parameters.
 detector = cv2.SimpleBlobDetector_create(params)
  
 # Detect blobs.
 keypoints = detector.detect(im)
+print(len(keypoints))
  
 # Draw detected blobs as red circles.
 # cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS ensures the size of the circle corresponds to the size of blob
