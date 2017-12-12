@@ -1,12 +1,16 @@
-
 # Standard imports
 import cv2
 import numpy as np
  
 # Read image
-im = cv2.imread("2017competition/all_images/061517_11-38-20-518.jpg", cv2.IMREAD_GRAYSCALE)
+im = cv2.imread("2017competition/all_images/061517_11-38-17-269.jpg", cv2.IMREAD_GRAYSCALE)
 
-# Set para ms
+#Thresholding is nice when the targets are light colored, but they won't always be
+# retval, threshold = cv2.threshold(im, 103, 255, cv2.THRESH_BINARY_INV)
+# cv2.imshow("Threshold", threshold)
+# cv2.waitKey(0)
+
+# Set params
 params = cv2.SimpleBlobDetector_Params()
 
 params.minThreshold = 0
@@ -20,7 +24,7 @@ params.filterByInertia = True
 params.filterByConvexity = False
 params.minArea = 75
 
-params.minInertiaRatio = .5
+params.minInertiaRatio = .1
 
 print(str(params.minThreshold) + " " + str(params.maxThreshold) + " " + str(params.thresholdStep))
 print params.filterByColor
